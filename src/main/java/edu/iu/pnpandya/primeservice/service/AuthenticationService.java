@@ -1,6 +1,7 @@
 package edu.iu.pnpandya.primeservice.service;
 
 import edu.iu.pnpandya.primeservice.model.Customer;
+import edu.iu.pnpandya.primeservice.repository.AuthenticationDBRepository;
 import edu.iu.pnpandya.primeservice.repository.IAuthenticationRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,15 +12,18 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-@Service
+@Service("authenticationService")
 public class AuthenticationService implements IAuthenticationService, UserDetailsService {
-    IAuthenticationRepository authenticationRepository;
-    public AuthenticationService(IAuthenticationRepository authenticationRepository) {
-        this.authenticationRepository= authenticationRepository;
+
+    private AuthenticationDBRepository authenticationRepository;
+
+
+    public AuthenticationService(AuthenticationDBRepository authenticationRepository) {
+        this.authenticationRepository = authenticationRepository;
     }
 
     @Override
-    public boolean register(Customer customer) throws IOException {
+    public Customer register(Customer customer) throws IOException {
         BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
         String passwordEncoded = bc.encode(customer.getPassword());
         customer.setPassword(passwordEncoded);
@@ -28,23 +32,27 @@ public class AuthenticationService implements IAuthenticationService, UserDetail
 
     @Override
     public boolean login(String username, String password) throws IOException {
+        Customer customer = authenticationRepository.findByUsername(username);
+        if (customer != null) {
+            BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
+            if (bc.matches(password, customer.getPassword())) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             Customer customer = authenticationRepository.findByUsername(username);
-            if (customer == null){
+            if (customer == null) {
                 throw new UsernameNotFoundException("");
             }
-            return User
-                    .withUsername(username)
-                    .password(customer.getPassword())
-                    .build();
-        } catch (IOException e){
+            return User.withUsername(username).password(customer.getPassword()).build();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-}
 
+}
