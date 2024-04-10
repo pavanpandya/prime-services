@@ -8,14 +8,14 @@ import java.security.KeyPairGenerator;
 public class KeyGeneratorUtils {
     private  KeyGeneratorUtils(){}
 
-    static KeyPair generateRsaKey(){
+    static KeyPair generateKeyPair(){
         KeyPair keyPair;
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (Exception ex){
-            throw new IllegalStateException(ex);
+            throw new RuntimeException(ex);
         }
         return keyPair;
     }

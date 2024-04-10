@@ -11,6 +11,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +31,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private RSAKey rsaKey;
+    private final RSAKey rsaKey;
 
     public SecurityConfig(){
         this.rsaKey = Jwks.generateRsa();
@@ -56,11 +57,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
             return http
                     .cors(Customizer.withDefaults())
-                    .csrf(x -> x.disable())
+                    .csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests( auth -> auth
                             .requestMatchers(
                                     HttpMethod.POST, "/register", "/login").permitAll()
-                            .anyRequest().authenticated()
+                            .requestMatchers(HttpMethod.GET, "/").permitAll().anyRequest().authenticated()
                     )
                     .sessionManagement(session ->
                             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

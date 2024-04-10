@@ -1,0 +1,31 @@
+services:
+  primes_service_spring:
+    image: "primes_service_spring"
+    build:
+      context: ../prime-service
+      dockerfile: Dockerfile
+    container_name: primes_service_spring
+    ports:
+      - "4000:3000"
+    environment:
+      - server.port=3000
+      - spring.datasource.url=jdbc:postgresql://primes-database:5432/primes
+      - spring.datasource.username=root
+      - spring.datasource.password=root
+      - spring.datasource.restart=false
+
+  primes-database:
+    image: postgres:alpine
+    ports:
+      - "4003:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: primes
+
+  rabbitmq:
+    image: rabbitmq:3.12.4-management
+    container_name: rabbitmq
+    ports:
+      - "4006:5672"
+      - "4007:15672"
+    restart: always

@@ -34,10 +34,10 @@ public class AuthenticationFileRepository implements IAuthenticationRepository{
     public Customer findByUsername(String username) throws IOException {
         Path path = Paths.get(DATABASE_NAME);
         List<String> data = Files.readAllLines(path);
-        for (String line: data){
-            if(!line.trim().isEmpty()){
+        for (String line : data) {
+            if (line != null && !line.trim().isEmpty()) {
                 String[] properties = line.split(",");
-                if(properties[0].trim().equalsIgnoreCase(username.trim())) {
+                if (properties != null && properties[0].trim().equalsIgnoreCase(username.trim())) {
                     return new Customer(properties[0].trim(), properties[1].trim());
                 }
             }
@@ -48,16 +48,11 @@ public class AuthenticationFileRepository implements IAuthenticationRepository{
     @Override
     public boolean save(Customer customer) throws IOException {
         Customer x = findByUsername(customer.getUsername());
-        if(x == null){
+        if(x == null) {
             Path path = Paths.get(DATABASE_NAME);
-            String data = String.format("%1$s, %2$s",
-                    customer.getUsername().trim(),
-                    customer.getPassword().trim());
-            data += NEW_LINE;
-            Files.write(path,
-                    data.getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND);
+            String data = String.format("%1$s, %2$s", customer.getUsername(), customer.getPassword());
+            data+=NEW_LINE;
+            Files.write(path, data.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             return true;
         }
         return false;

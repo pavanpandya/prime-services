@@ -9,12 +9,15 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
 public class Jwks {
-    private Jwks() {}
+    private Jwks() {
+    }
 
     public static RSAKey generateRsa() {
-        KeyPair keyPair = KeyGeneratorUtils.generateRsaKey();
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        KeyPair keyPair = KeyGeneratorUtils.generateKeyPair();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString()).build();
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        return new RSAKey.Builder(publicKey)
+                .privateKey(privateKey)
+                .keyID(UUID.randomUUID().toString()).build();
     }
 }

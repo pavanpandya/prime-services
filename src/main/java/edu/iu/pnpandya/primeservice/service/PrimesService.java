@@ -3,14 +3,14 @@ package edu.iu.pnpandya.primeservice.service;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PrimesService implements IPrimesService{
+public class PrimesService implements IPrimesService {
     @Override
-    public boolean isPrime(long n){
-        if (n==2) {
-            return true;
+    public boolean isPrime(long number) {
+        if (number <= 1) {
+            return false;
         }
-        for(long i=2L; i < n; i++){
-            if (n % i == 0){
+        for (int i = 2; i <= Math.sqrt(number); i++) {
+            if (number % i == 0) {
                 return false;
             }
         }
