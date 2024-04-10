@@ -1,4 +1,4 @@
-## Group Members (Till Practicum-10)
+## Group Members
 1) [Pavan Pandya](https://github.com/pavanpandya)
 2) [Nisarg Shah](https://github.com/nisarg0606)
 
